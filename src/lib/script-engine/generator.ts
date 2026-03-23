@@ -170,16 +170,21 @@ export async function generateScript(input: ScriptInput): Promise<GeneratedScrip
   const client = createClient(input.llmConfig);
   const userPrompt = buildBatchPrompt(input, 3);
 
-  // 不使用 response_format: json_object，很多模型不支持会返回 400
-  // 改为在 prompt 中约束 JSON 输出，再用 extractJSON 解析
-  const response = await client.chat.completions.create({
-    model: input.llmConfig.model,
-    messages: [
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: userPrompt },
-    ],
-    temperature: 0.8,
-  });
+  // 调用 LLM 生成脚本
+  let response;
+  try {
+    response = await client.chat.completions.create({
+      model: input.llmConfig.model,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.8,
+    });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(`LLM 请求失败（模型: ${input.llmConfig.model}，地址: ${input.llmConfig.baseUrl}）: ${msg}`);
+  }
 
   const content = response.choices[0]?.message?.content;
   if (!content) {

@@ -25,10 +25,19 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // 如果有商品图，先用视觉模型分析
+    // 商品图分析：只在图片是完整 URL（http开头）时才调用视觉模型
+    // 本地路径（/api/files/...）外部 LLM 无法访问，跳过分析
     let analysis = body.productAnalysis;
     if (!analysis && productImages?.length > 0 && llmConfig) {
-      analysis = await analyzeProduct(productImages, llmConfig);
+      const httpImages = productImages.filter((url: string) => url.startsWith("http"));
+      if (httpImages.length > 0) {
+        try {
+          analysis = await analyzeProduct(httpImages, llmConfig);
+        } catch (e) {
+          // 图片分析失败不阻塞脚本生成
+          console.warn("商品图片分析失败（已跳过）:", e);
+        }
+      }
     }
 
     // 生成脚本
@@ -45,8 +54,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ scripts, analysis });
   } catch (error) {
     console.error("脚本生成失败:", error);
+    // 提取更详细的错误信息
+    const errMsg = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "脚本生成失败" },
+      { error: `脚本生成失败: ${errMsg}` },
       { status: 500 }
     );
   }
