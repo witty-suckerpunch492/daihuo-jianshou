@@ -213,6 +213,12 @@ export default function NewProjectPage() {
           styleType: scriptStyle,
           videoMode,
           productImages: paths,
+          llmConfig: {
+            baseUrl: llm.baseUrl,
+            apiKey: llm.apiKey,
+            model: llm.model,
+            visionModel: llm.visionModel,
+          },
           priceRange,
           targetAudience: targetAudience.join(","),
           platforms: platforms.join(","),
