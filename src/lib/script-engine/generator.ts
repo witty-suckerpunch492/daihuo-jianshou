@@ -170,6 +170,8 @@ export async function generateScript(input: ScriptInput): Promise<GeneratedScrip
   const client = createClient(input.llmConfig);
   const userPrompt = buildBatchPrompt(input, 3);
 
+  // 不使用 response_format: json_object，很多模型不支持会返回 400
+  // 改为在 prompt 中约束 JSON 输出，再用 extractJSON 解析
   const response = await client.chat.completions.create({
     model: input.llmConfig.model,
     messages: [
@@ -177,7 +179,6 @@ export async function generateScript(input: ScriptInput): Promise<GeneratedScrip
       { role: "user", content: userPrompt },
     ],
     temperature: 0.8,
-    response_format: { type: "json_object" },
   });
 
   const content = response.choices[0]?.message?.content;
@@ -204,7 +205,6 @@ export async function generateSingleScript(input: ScriptInput): Promise<Generate
       { role: "user", content: userPrompt },
     ],
     temperature: 0.8,
-    response_format: { type: "json_object" },
   });
 
   const content = response.choices[0]?.message?.content;
