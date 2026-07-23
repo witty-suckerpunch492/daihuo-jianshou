@@ -43,7 +43,7 @@ export function proxy(request: NextRequest) {
   return new NextResponse("需要登录后访问", {
     status: 401,
     headers: {
-      "WWW-Authenticate": 'Basic realm="带货剪手", charset="UTF-8"',
+      "WWW-Authenticate": 'Basic realm="Daihuo Jianshou", charset="UTF-8"',
       "Cache-Control": "no-store",
     },
   });
