@@ -8,6 +8,13 @@
       "when": 1774103863460,
       "tag": "0000_minor_nextwave",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1784813443215,
+      "tag": "0001_wet_tyger_tiger",
+      "breakpoints": true
     }
   ]
 }
